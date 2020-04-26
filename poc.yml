@@ -95,7 +95,56 @@ Resources:
           }
       Timeout: 60
 
-  CodeDeployExecutionRole:
+  # CodeDeployExecutionRole:
+  #   Type: AWS::IAM::Role
+  #   Properties:
+  #     AssumeRolePolicyDocument:
+  #       Version: 2012-10-17
+  #       Statement:
+  #         - Effect: Allow
+  #           Principal:
+  #             Service: 
+  #               - codedeploy.amazonaws.com
+  #           Action: sts:AssumeRole
+  #     Policies:
+  #       - PolicyDocument:
+  #           Version: 2012-10-17
+  #           Statement:
+  #             - Effect: Allow
+  #               Action: "lambda:*"
+  #               Resource: "*"
+  #         PolicyName: LambdaAccess
+  #     RoleName: CanaryCodeDeployExecutionRole
+
+  # CodeDeployApp:
+  #   Type: AWS::CodeDeploy::Application
+  #   Properties:
+  #     ApplicationName: CanaryLambdaApp
+  #     ComputePlatform: Lambda
+
+  # CodeDeployDeploymentGroup:
+  #   Type: AWS::CodeDeploy::DeploymentGroup
+  #   Properties:
+  #     # AlarmConfiguration: 
+  #     #   AlarmConfiguration
+  #     ApplicationName: !Ref CodeDeployApp
+  #     # AutoRollbackConfiguration: 
+  #     #   AutoRollbackConfiguration
+  #     # Deployment: 
+  #     #   Description: DeploymentDesc
+  #     #   IgnoreApplicationStopFailures: false
+  #     #   Revision:
+  #     #     RevisionType: AppSpecContent
+  #     DeploymentConfigName: CodeDeployDefaultLambdaCanary10Percent5Minutes
+  #     DeploymentGroupName: CanaryDeploymentGroup
+  #     DeploymentStyle: 
+  #       DeploymentOption: WITH_TRAFFIC_CONTROL
+  #       DeploymentType: BLUE_GREEN
+  #     ServiceRoleArn: !GetAtt CodeDeployExecutionRole.Arn
+  #     # TriggerConfigurations: 
+  #     #   - TriggerConfig
+  
+  CodePipelineExecutionRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -103,44 +152,66 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              Service: 
-                - codedeploy.amazonaws.com
+              Service:
+                - codepipeline.amazonaws.com
             Action: sts:AssumeRole
       Policies:
         - PolicyDocument:
             Version: 2012-10-17
             Statement:
               - Effect: Allow
-                Action: "lambda:*"
+                Action: "*"
                 Resource: "*"
-          PolicyName: LambdaAccess
-      RoleName: CanaryCodeDeployExecutionRole
+          PolicyName: AllPermissions
+      RoleName: CanaryCodePipelineRole
 
-  CodeDeployApp:
-    Type: AWS::CodeDeploy::Application
+  Pipeline:
+    Type: AWS::CodePipeline::Pipeline
     Properties:
-      ApplicationName: CanaryLambdaApp
-      ComputePlatform: Lambda
+      RestartExecutionOnUpdate: true
+      RoleArn: !GetAtt CodePipelineExecutionRole.Arn
+      Stages:
+        - Actions:
+          - ActionTypeId:
+              Category: Source
+              Owner: ThirdParty
+              Provider: GitHub
+              Version: '1'
+            Configuration:
+              Owner: ZhangMaKe
+              Repo: CanaryLambda
+              Branch: master
+              OAuthToken: '463d6edc736312c3ef4cb16af42d5436c8010b80'
+              PollForSourceChanges: false
+            Name: Source 
+            OutputArtifacts:
+              - Name: source
+          Name: Source
+        - Actions:
+          - ActionTypeId:
+              Category: Deploy
+              Owner: AWS
+              Provider: CloudFormation
+              Version: '1'
+            Configuration:
+              OutputFileName: pipelineStackOutput.json
+              Capabilities: 'CAPABILITY_NAMED_IAM'
+              RoleArn: !GetAtt CodePipelineExecutionRole.Arn
+              StackName: Canary
+              ActionMode: CREATE_UPDATE
+              TemplatePath: source::poc.yml
+            InputArtifacts:
+              - Name: source
+            RoleArn: !GetAtt CodePipelineExecutionRole.Arn
+            RunOrder: 1
+            Name: Stack
+          Name: AdministerPipeline
+      ArtifactStores:
+        - ArtifactStore:
+            Location: !Ref ArtifactBucket
+            Type: S3
+          Region: us-east-1
+      Name: CanaryPipeline
 
-  CodeDeployDeploymentGroup:
-    Type: AWS::CodeDeploy::DeploymentGroup
-    Properties:
-      # AlarmConfiguration: 
-      #   AlarmConfiguration
-      ApplicationName: !Ref CodeDeployApp
-      # AutoRollbackConfiguration: 
-      #   AutoRollbackConfiguration
-      # Deployment: 
-      #   Description: DeploymentDesc
-      #   IgnoreApplicationStopFailures: false
-      #   Revision:
-      #     RevisionType: AppSpecContent
-      DeploymentConfigName: CodeDeployDefaultLambdaCanary10Percent5Minutes
-      DeploymentGroupName: CanaryDeploymentGroup
-      DeploymentStyle: 
-        DeploymentOption: WITH_TRAFFIC_CONTROL
-        DeploymentType: BLUE_GREEN
-      ServiceRoleArn: !GetAtt CodeDeployExecutionRole.Arn
-      # TriggerConfigurations: 
-      #   - TriggerConfig
-      
+  ArtifactBucket:
+    Type: AWS::S3::Bucket
