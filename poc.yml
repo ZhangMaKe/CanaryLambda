@@ -5,7 +5,7 @@ Transform: AWS::Serverless-2016-10-31
 Parameters:
   GHToken:
     Type: AWS::SSM::Parameter::Value<String>
-    Default: :default
+    Default: token
 
 Resources:
 
