@@ -202,7 +202,7 @@ Resources:
               Version: '1'
             Configuration:
               OutputFileName: pipelineStackOutput.json
-              Capabilities: 'CAPABILITY_NAMED_IAM'
+              Capabilities: 'CAPABILITY_NAMED_IAM, CAPABILITY_AUTO_EXPAND'
               RoleArn: !GetAtt CodePipelineExecutionRole.Arn
               StackName: Canary
               ActionMode: CREATE_UPDATE
