@@ -1,6 +1,12 @@
 #poc for lambda canary deployments
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
+
+Parameters:
+  GHToken:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: :default
+
 Resources:
 
   LambdaExecutionRole:
@@ -95,32 +101,32 @@ Resources:
           }
       Timeout: 60
 
-  # CodeDeployExecutionRole:
-  #   Type: AWS::IAM::Role
-  #   Properties:
-  #     AssumeRolePolicyDocument:
-  #       Version: 2012-10-17
-  #       Statement:
-  #         - Effect: Allow
-  #           Principal:
-  #             Service: 
-  #               - codedeploy.amazonaws.com
-  #           Action: sts:AssumeRole
-  #     Policies:
-  #       - PolicyDocument:
-  #           Version: 2012-10-17
-  #           Statement:
-  #             - Effect: Allow
-  #               Action: "lambda:*"
-  #               Resource: "*"
-  #         PolicyName: LambdaAccess
-  #     RoleName: CanaryCodeDeployExecutionRole
+  CodeDeployExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: 
+                - codedeploy.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: "lambda:*"
+                Resource: "*"
+          PolicyName: LambdaAccess
+      RoleName: CanaryCodeDeployExecutionRole
 
-  # CodeDeployApp:
-  #   Type: AWS::CodeDeploy::Application
-  #   Properties:
-  #     ApplicationName: CanaryLambdaApp
-  #     ComputePlatform: Lambda
+  CodeDeployApp:
+    Type: AWS::CodeDeploy::Application
+    Properties:
+      ApplicationName: CanaryLambdaApp
+      ComputePlatform: Lambda
 
   # CodeDeployDeploymentGroup:
   #   Type: AWS::CodeDeploy::DeploymentGroup
@@ -181,7 +187,7 @@ Resources:
               Owner: ZhangMaKe
               Repo: CanaryLambda
               Branch: master
-              OAuthToken: '463d6edc736312c3ef4cb16af42d5436c8010b80'
+              OAuthToken: !Ref GHToken
               PollForSourceChanges: false
             Name: Source 
             OutputArtifacts:
