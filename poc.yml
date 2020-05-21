@@ -45,6 +45,28 @@ Resources:
           PolicyName: AllPermissions
       RoleName: CanaryCodePipelineRole
 
+  CanaryBuild:
+    Type: AWS::CodeBuild::Project
+    Properties: 
+      Artifacts: 
+        Type: CODEPIPELINE
+      Description: Canary Build Project
+      Environment: 
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/standard:2.0
+        PrivilegedMode: false
+        Type: LINUX_CONTAINER
+      LogsConfig: 
+        CloudWatchLogs:
+          Status: DISABLED
+      Name: CanaryBuild
+      QueuedTimeoutInMinutes: 20
+      ServiceRole: !GetAtt CodePipelineExecutionRole.Arn
+      Source: 
+        BuildSpec: code/buildspec.yml
+        Type: CODEPIPELINE
+      TimeoutInMinutes: 10
+
   Pipeline:
     Type: AWS::CodePipeline::Pipeline
     Properties:
@@ -88,6 +110,20 @@ Resources:
           Name: AdministerPipeline
         - Actions:
           - ActionTypeId:
+              Category: Build
+              Owner: AWS
+              Provider: CodeBuild
+              Version: '1'
+            Configuration:
+              ProjectName: CanaryBuild
+            InputArtifacts:
+              - Name: source
+            Name: BuildCanaryFunction
+            OutputArtifacts:
+              - Name: code
+            RoleArn: !GetAtt CodePipelineExecutionRole.Arn
+            RunOrder: 1
+          - ActionTypeId:
               Category: Deploy
               Owner: AWS
               Provider: CloudFormation
@@ -102,7 +138,7 @@ Resources:
             InputArtifacts:
               - Name: source
             RoleArn: !GetAtt CodePipelineExecutionRole.Arn
-            RunOrder: 1
+            RunOrder: 2
             Name: CanaryServiceStack
           Name: CanaryService
       ArtifactStores:
