@@ -146,9 +146,9 @@ Resources:
               RoleArn: !GetAtt CodePipelineExecutionRole.Arn
               StackName: CanaryService
               ActionMode: CREATE_UPDATE
-              TemplatePath: source::canaryservice.yml
+              TemplatePath: code::canaryservice-package.yml
             InputArtifacts:
-              - Name: code::canaryservice-package.yml
+              - Name: code
             RoleArn: !GetAtt CodePipelineExecutionRole.Arn
             RunOrder: 2
             Name: CanaryServiceStack
