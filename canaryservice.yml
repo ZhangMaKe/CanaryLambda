@@ -63,13 +63,6 @@ Resources:
       Role: !GetAtt LambdaExecutionRole.Arn
       FunctionName: CanaryFunction
       CodeUri: ./code/canaryfunction
-      # InlineCode: |
-      #   import json
-      #   def handler(event, context):
-      #     return {
-      #       'statusCode': 200,
-      #       'body': json.dumps('version 2')
-      #     }
       Timeout: 60
       #Tracing: Active
       Events:
