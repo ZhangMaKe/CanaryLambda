@@ -8,147 +8,6 @@ Parameters:
     Default: token
 
 Resources:
-
-  LambdaExecutionRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service: 
-                - lambda.amazonaws.com
-            Action: sts:AssumeRole
-      Policies:
-        - PolicyDocument:
-            Version: 2012-10-17
-            Statement:
-              - Effect: Allow
-                Action: "*"
-                Resource: "*"
-          PolicyName: XRayWriteAccess
-      RoleName: CanaryLambdaExecutionRole
-
-  LambdaExecutionXRayPolicy:
-    Type: AWS::IAM::Policy
-    Properties:
-      PolicyName: LambdaExecutionXRayPolicy
-      Roles:
-        - !Ref LambdaExecutionRole
-      PolicyDocument:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Action: "*"
-            Resource: "*"
-
-  Api:
-    Type: AWS::Serverless::Api
-    Properties:
-      EndpointConfiguration: REGIONAL
-      Name: LambdaCanary
-      StageName: prod
-      TracingEnabled: true
-
-  Function:
-    DependsOn:
-      - LambdaExecutionXRayPolicy
-    Type: AWS::Serverless::Function 
-    Properties:
-      AutoPublishAlias: current
-      DeploymentPreference:
-        Enabled: true
-        Type: Canary10Percent5Minutes
-        # Hooks:
-        #   PreTraffic: !Ref PreTrafficFunction
-      Handler: index.handler
-      Runtime: python3.7
-      Role: !GetAtt LambdaExecutionRole.Arn
-      FunctionName: CanaryFunction
-      InlineCode: |
-        import json
-        def handler(event, context):
-          return {
-            'statusCode': 200,
-            'body': json.dumps('version 1')
-          }
-      Timeout: 60
-      #Tracing: Active
-      Events:
-        ApiEvent:
-          Type: Api
-          Properties:
-            Path: /canary
-            Method: get
-            RestApiId: !Ref Api
-
-  PreTrafficFunction:
-    DependsOn:
-      - LambdaExecutionXRayPolicy
-    Type: AWS::Serverless::Function
-    Properties:
-      Handler: index.handler
-      Runtime: python3.7
-      Role: !GetAtt LambdaExecutionRole.Arn
-      FunctionName: PreTrafficFunction
-      InlineCode: |
-        import json
-        def handler(event, context):
-          return {
-            'statusCode': 200,
-            'body': json.dumps('success')
-          }
-      Timeout: 60
-
-  # CodeDeployExecutionRole:
-  #   Type: AWS::IAM::Role
-  #   Properties:
-  #     AssumeRolePolicyDocument:
-  #       Version: 2012-10-17
-  #       Statement:
-  #         - Effect: Allow
-  #           Principal:
-  #             Service: 
-  #               - codedeploy.amazonaws.com
-  #           Action: sts:AssumeRole
-  #     Policies:
-  #       - PolicyDocument:
-  #           Version: 2012-10-17
-  #           Statement:
-  #             - Effect: Allow
-  #               Action: "lambda:*"
-  #               Resource: "*"
-  #         PolicyName: LambdaAccess
-  #     RoleName: CanaryCodeDeployExecutionRole
-
-  # CodeDeployApp:
-  #   Type: AWS::CodeDeploy::Application
-  #   Properties:
-  #     ApplicationName: CanaryLambdaApp
-  #     ComputePlatform: Lambda
-
-  # CodeDeployDeploymentGroup:
-  #   Type: AWS::CodeDeploy::DeploymentGroup
-  #   Properties:
-  #     # AlarmConfiguration: 
-  #     #   AlarmConfiguration
-  #     ApplicationName: !Ref CodeDeployApp
-  #     # AutoRollbackConfiguration: 
-  #     #   AutoRollbackConfiguration
-  #     # Deployment: 
-  #     #   Description: DeploymentDesc
-  #     #   IgnoreApplicationStopFailures: false
-  #     #   Revision:
-  #     #     RevisionType: AppSpecContent
-  #     DeploymentConfigName: CodeDeployDefault.LambdaCanary10Percent5Minutes
-  #     DeploymentGroupName: CanaryDeploymentGroup
-  #     DeploymentStyle: 
-  #       DeploymentOption: WITH_TRAFFIC_CONTROL
-  #       DeploymentType: BLUE_GREEN
-  #     ServiceRoleArn: !GetAtt CodeDeployExecutionRole.Arn
-  #     # TriggerConfigurations: 
-  #     #   - TriggerConfig
   
   CodePipelineExecutionRole:
     Type: AWS::IAM::Role
@@ -213,21 +72,25 @@ Resources:
             RunOrder: 1
             Name: Stack
           Name: AdministerPipeline
-        # - Actions:
-        #   - ActionTypeId:
-        #       Category: Deploy
-        #       Owner: AWS
-        #       Provider: CodeDeploy
-        #       Version: '1'
-        #     Configuration:
-        #       ApplicationName: !Ref CodeDeployApp
-        #       DeploymentGroupName: !Ref CodeDeployDeploymentGroup
-        #     InputArtifacts:
-        #       - Name: source
-        #     RoleArn: !GetAtt CodePipelineExecutionRole.Arn
-        #     RunOrder: 1
-        #     Name: DeployLambda
-        #   Name: Deploy
+        - Actions:
+          - ActionTypeId:
+              Category: Deploy
+              Owner: AWS
+              Provider: CloudFormation
+              Version: '1'
+            Configuration:
+              OutputFileName: canaryServiceStackOutput.json
+              Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
+              RoleArn: !GetAtt CodePipelineExecutionRole.Arn
+              StackName: CanaryService
+              ActionMode: CREATE_UPDATE
+              TemplatePath: source::canaryservice.yml
+            InputArtifacts:
+              - Name: source
+            RoleArn: !GetAtt CodePipelineExecutionRole.Arn
+            RunOrder: 1
+            Name: CanaryServiceStack
+          Name: CanaryService
       ArtifactStores:
         - ArtifactStore:
             Location: !Ref ArtifactBucket

@@ -1,0 +1,98 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Resources:
+
+  LambdaExecutionRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Version: 2012-10-17
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service: 
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyDocument:
+              Version: 2012-10-17
+              Statement:
+                - Effect: Allow
+                  Action: "*"
+                  Resource: "*"
+            PolicyName: XRayWriteAccess
+        RoleName: CanaryLambdaExecutionRole
+
+  LambdaExecutionXRayPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: LambdaExecutionXRayPolicy
+      Roles:
+        - !Ref LambdaExecutionRole
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action: "*"
+            Resource: "*"
+
+  Api:
+    Type: AWS::Serverless::Api
+    Properties:
+      EndpointConfiguration: REGIONAL
+      Name: LambdaCanary
+      StageName: prod
+      TracingEnabled: true
+
+  Function:
+    DependsOn:
+      - LambdaExecutionXRayPolicy
+    UpdateReplacePolicy: Retain
+    DeletionPolicy: Retain
+    Type: AWS::Serverless::Function 
+    Properties:
+      AutoPublishAlias: current
+      DeploymentPreference:
+        Enabled: true
+        Type: Canary10Percent5Minutes
+        # Hooks:
+        #   PreTraffic: !Ref PreTrafficFunction
+      Handler: index.handler
+      Runtime: python3.7
+      Role: !GetAtt LambdaExecutionRole.Arn
+      FunctionName: CanaryFunction
+      InlineCode: |
+        import json
+        def handler(event, context):
+          return {
+            'statusCode': 200,
+            'body': json.dumps('version 1')
+          }
+      Timeout: 60
+      #Tracing: Active
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            Path: /canary
+            Method: get
+            RestApiId: !Ref Api
+
+  PreTrafficFunction:
+    DependsOn:
+      - LambdaExecutionXRayPolicy
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      Runtime: python3.7
+      Role: !GetAtt LambdaExecutionRole.Arn
+      FunctionName: PreTrafficFunction
+      InlineCode: |
+        import json
+        def handler(event, context):
+          return {
+            'statusCode': 200,
+            'body': json.dumps('success')
+          }
+      Timeout: 60
