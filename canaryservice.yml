@@ -62,7 +62,7 @@ Resources:
       Runtime: python3.7
       Role: !GetAtt LambdaExecutionRole.Arn
       FunctionName: CanaryFunction
-      CodeUri: code/canaryfunction/
+      CodeUri: build/
       # InlineCode: |
       #   import json
       #   def handler(event, context):
