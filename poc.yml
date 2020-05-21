@@ -34,6 +34,7 @@ Resources:
               Service:
                 - codepipeline.amazonaws.com
                 - cloudformation.amazonaws.com
+                - codebuild.amazonaws.com
             Action: sts:AssumeRole
       Policies:
         - PolicyDocument:
