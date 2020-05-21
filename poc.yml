@@ -71,7 +71,7 @@ Resources:
         def handler(event, context):
           return {
             'statusCode': 200,
-            'body': json.dumps('version 5')
+            'body': json.dumps('version 1')
           }
       Timeout: 60
       #Tracing: Active
