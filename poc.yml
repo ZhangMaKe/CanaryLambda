@@ -9,6 +9,20 @@ Parameters:
 
 Resources:
   
+  GithubWebhook:
+    Type: AWS::CodePipeline::Webhook
+    Properties:
+      Authentication: GITHUB_HMAC
+      AuthenticationConfiguration:
+        SecretToken: GHToken
+      Filters:
+        - JsonPath: $.ref
+          MatchEquals: refs/heads/{Branch}
+      TargetAction: Source
+      TargetPipeline: !Ref Pipeline
+      TargetPipelineVersion: 1
+      RegisterWithThirdParty: true
+
   CodePipelineExecutionRole:
     Type: AWS::IAM::Role
     Properties:
