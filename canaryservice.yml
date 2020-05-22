@@ -56,8 +56,8 @@ Resources:
       DeploymentPreference:
         Enabled: true
         Type: Canary10Percent5Minutes
-        # Hooks:
-        #   PreTraffic: !Ref PreTrafficFunction
+        Hooks:
+          PreTraffic: !Ref PreTrafficFunction
       Handler: index.handler
       Runtime: python3.7
       Role: !GetAtt LambdaExecutionRole.Arn
