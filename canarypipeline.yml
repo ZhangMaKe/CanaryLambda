@@ -111,9 +111,9 @@ Resources:
               OutputFileName: pipelineStackOutput.json
               Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
               RoleArn: !GetAtt CodePipelineExecutionRole.Arn
-              StackName: Canary
+              StackName: CanaryPipeline
               ActionMode: CREATE_UPDATE
-              TemplatePath: source::poc.yml
+              TemplatePath: source::canarypipeline.yml
             InputArtifacts:
               - Name: source
             RoleArn: !GetAtt CodePipelineExecutionRole.Arn
