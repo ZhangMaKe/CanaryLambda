@@ -1,9 +1,0 @@
-version: 0.0
-Resources:
-  - canarylambda:
-      Type: AWS::Lambda::Function
-      Properties:
-        Name: CanaryFunction
-        Alias: current
-        CurrentVersion: "1"
-        TargetVersion: "2"
