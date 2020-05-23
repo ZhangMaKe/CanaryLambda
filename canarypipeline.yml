@@ -35,14 +35,25 @@ Resources:
                 - codepipeline.amazonaws.com
                 - cloudformation.amazonaws.com
             Action: sts:AssumeRole
-      # Policies:
-      #   - PolicyDocument:
-      #       Version: 2012-10-17
-      #       Statement:
-      #         - Effect: Allow
-      #           Action: "*"
-      #           Resource: "*"
-      #     PolicyName: AllPermissions
+      Policies:
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action: 
+                  - iam:GetRole
+                  - iam:PutRolePolicy
+                Resource: "*"
+          PolicyName: AllPermissions
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sts:AssumeRole
+                Resource:
+                  - !GetAtt AdministerPipelineRole.Arn
+          PolicyName: PipelineAssumeRolePolicy
       RoleName: CanaryCodePipelineRole
 
   CodeBuildServiceRole:
@@ -71,6 +82,28 @@ Resources:
           PolicyName: CanaryCodeBuildS3Permissions
       RoleName: CanaryCodeBuildRole
 
+  AdministerPipelineRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - cloudformation.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - cloudformation:UpdateStack
+                Resource: "*"
+          PolicyName: CanaryPipelineAdministrationPolicy
+      RoleName: CanaryPipelineAdministrationRole
+  
   CanaryBuild:
     Type: AWS::CodeBuild::Project
     Properties: 
@@ -134,13 +167,13 @@ Resources:
             Configuration:
               OutputFileName: pipelineStackOutput.json
               Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
-              RoleArn: !GetAtt CodePipelineExecutionRole.Arn #todo: create separate role
+              RoleArn: !GetAtt AdministerPipelineRole.Arn
               StackName: CanaryPipeline
               ActionMode: CREATE_UPDATE
               TemplatePath: source::canarypipeline.yml
             InputArtifacts:
               - Name: source
-            RoleArn: !GetAtt CodePipelineExecutionRole.Arn
+            RoleArn: !GetAtt AdministerPipelineRole.Arn
             RunOrder: 1
             Name: Stack
           Name: AdministerPipeline
