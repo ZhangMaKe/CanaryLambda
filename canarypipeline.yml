@@ -64,10 +64,11 @@ Resources:
               - Effect: Allow
                 Action:
                   - s3:GetObject
+                  - s3:PutObject
                 Resource:
                   - !GetAtt ArtifactBucket.Arn
                   - !Join ['', [!GetAtt ArtifactBucket.Arn, "/*"]]
-          PolicyName: CanaryCodeBuildPermissions
+          PolicyName: CanaryCodeBuildS3Permissions
       RoleName: CanaryCodeBuildRole
 
   CanaryBuild:
