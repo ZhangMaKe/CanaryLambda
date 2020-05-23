@@ -44,7 +44,7 @@ Resources:
                   - iam:GetRole
                   - iam:PutRolePolicy
                   - sts:AssumeRole
-                  - s3:*
+                  - *
                 Resource: "*"
           PolicyName: AllPermissions
       RoleName: CanaryCodePipelineRole
