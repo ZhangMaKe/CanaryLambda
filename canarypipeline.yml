@@ -57,6 +57,17 @@ Resources:
                 - codebuild.amazonaws.com
                 - ecs.amazonaws.com
             Action: sts:AssumeRole
+      Policies:
+        - PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                Resource:
+                  - !GetAtt ArtifactBucket.Arn
+                  - !Join ['', [!GetAtt ArtifactBucket.Arn, "/*"]]
+          PolicyName: CanaryCodeBuildPermissions
       RoleName: CanaryCodeBuildRole
 
   CanaryBuild:
