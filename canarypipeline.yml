@@ -45,15 +45,6 @@ Resources:
                   - iam:PutRolePolicy
                 Resource: "*"
           PolicyName: AllPermissions
-        - PolicyDocument:
-            Version: 2012-10-17
-            Statement:
-              - Effect: Allow
-                Action:
-                  - sts:AssumeRole
-                Resource:
-                  - !GetAtt AdministerPipelineRole.Arn
-          PolicyName: PipelineAssumeRolePolicy
       RoleName: CanaryCodePipelineRole
 
   CodeBuildServiceRole:
@@ -92,6 +83,10 @@ Resources:
             Principal:
               Service:
                 - cloudformation.amazonaws.com
+            Action: sts:AssumeRole
+          - Effect: Allow
+            Principal:
+              AWS: !GetAtt CodePipelineExecutionRole.Arn
             Action: sts:AssumeRole
       Policies:
         - PolicyDocument:
@@ -192,23 +187,23 @@ Resources:
               - Name: code
             RoleArn: !GetAtt CodePipelineExecutionRole.Arn
             RunOrder: 1
-          - ActionTypeId:
-              Category: Deploy
-              Owner: AWS
-              Provider: CloudFormation
-              Version: '1'
-            Configuration:
-              OutputFileName: canaryServiceStackOutput.json
-              Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
-              RoleArn: !GetAtt CodePipelineExecutionRole.Arn #todo: create separate role
-              StackName: CanaryService
-              ActionMode: CREATE_UPDATE
-              TemplatePath: code::canaryservice-package.yml
-            InputArtifacts:
-              - Name: code
-            RoleArn: !GetAtt CodePipelineExecutionRole.Arn
-            RunOrder: 2
-            Name: CanaryServiceStack
+          # - ActionTypeId:
+          #     Category: Deploy
+          #     Owner: AWS
+          #     Provider: CloudFormation
+          #     Version: '1'
+          #   Configuration:
+          #     OutputFileName: canaryServiceStackOutput.json
+          #     Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
+          #     RoleArn: !GetAtt CodePipelineExecutionRole.Arn #todo: create separate role
+          #     StackName: CanaryService
+          #     ActionMode: CREATE_UPDATE
+          #     TemplatePath: code::canaryservice-package.yml
+          #   InputArtifacts:
+          #     - Name: code
+          #   RoleArn: !GetAtt CodePipelineExecutionRole.Arn
+          #   RunOrder: 2
+          #   Name: CanaryServiceStack
           Name: CanaryService
       ArtifactStores:
         - ArtifactStore:
