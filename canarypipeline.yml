@@ -35,14 +35,14 @@ Resources:
                 - codepipeline.amazonaws.com
                 - cloudformation.amazonaws.com
             Action: sts:AssumeRole
-      Policies:
-        - PolicyDocument:
-            Version: 2012-10-17
-            Statement:
-              - Effect: Allow
-                Action: "*"
-                Resource: "*"
-          PolicyName: AllPermissions
+      # Policies:
+      #   - PolicyDocument:
+      #       Version: 2012-10-17
+      #       Statement:
+      #         - Effect: Allow
+      #           Action: "*"
+      #           Resource: "*"
+      #     PolicyName: AllPermissions
       RoleName: CanaryCodePipelineRole
 
   CodeBuildServiceRole:
