@@ -101,6 +101,7 @@ Resources:
                   - s3:GetObject
                   - iam:PassRole
                   - ssm:GetParameters
+                  - cloudformation:CreateChangeSet
                 Resource: "*"
           PolicyName: CanaryPipelineAdministrationPolicy
       RoleName: CanaryPipelineAdministrationRole
