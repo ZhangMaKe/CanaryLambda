@@ -99,15 +99,12 @@ Resources:
                   - cloudformation:UpdateStack
                   - cloudformation:DescribeStacks
                   - s3:GetObject
-                  - iam:PassRole
                   - ssm:GetParameters
                   - cloudformation:CreateChangeSet
                   - codepipeline:DeletePipeline
                   - codepipeline:DeregisterWebhookWithThirdParty
                   - codebuild:DeleteProject
-                  - iam:DeleteRolePolicy
                   - s3:DeleteBucket
-                  - iam:DeleteRole
                   - codepipeline:GetPipeline
                   - codepipeline:DeleteWebhook
                   - iam:GetRole
@@ -128,10 +125,12 @@ Resources:
           - Effect: Allow
             Action:
               - iam:CreateRole
+              - iam:PassRole
             Resource: "*"
           - Effect: Allow
             Action:
               - iam:DeleteRole
+              - iam:DeleteRolePolicy
             Resource:
               - !GetAtt ServiceStackRole.Arn
               - !GetAtt CodeBuildServiceRole.Arn
