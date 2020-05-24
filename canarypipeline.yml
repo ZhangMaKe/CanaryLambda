@@ -102,6 +102,15 @@ Resources:
                   - iam:PassRole
                   - ssm:GetParameters
                   - cloudformation:CreateChangeSet
+                  - codepipeline:DeletePipeline
+                  - codepipeline:DeregisterWebhookWithThirdParty
+                  - codebuild:DeleteProject
+                  - iam:DeleteRolePolicy
+                  - s3:DeleteBucket
+                  - iam:DeleteRole
+                  - codepipeline:GetPipeline
+                  - codepipeline:DeleteWebhook
+                  - iam:GetRole
                 Resource: "*"
           PolicyName: CanaryPipelineAdministrationPolicy
       RoleName: CanaryPipelineAdministrationRole
