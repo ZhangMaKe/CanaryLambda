@@ -98,6 +98,7 @@ Resources:
                 Action:
                   - cloudformation:UpdateStack
                   - cloudformation:DescribeStacks
+                  - s3:GetObject
                 Resource: "*"
           PolicyName: CanaryPipelineAdministrationPolicy
       RoleName: CanaryPipelineAdministrationRole
