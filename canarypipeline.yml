@@ -97,6 +97,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - cloudformation:UpdateStack
+                  - cloudformation:DescribeStacks
                 Resource: "*"
           PolicyName: CanaryPipelineAdministrationPolicy
       RoleName: CanaryPipelineAdministrationRole
