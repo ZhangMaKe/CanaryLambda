@@ -99,6 +99,7 @@ Resources:
                   - cloudformation:UpdateStack
                   - cloudformation:DescribeStacks
                   - s3:GetObject
+                  - iam:PassRole
                 Resource: "*"
           PolicyName: CanaryPipelineAdministrationPolicy
       RoleName: CanaryPipelineAdministrationRole
