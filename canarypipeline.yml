@@ -161,6 +161,9 @@ Resources:
                   - codedeploy:CreateApplication 
                   - iam:GetRole
                   - iam:CreateRole
+                  - codedeploy:DeleteApplication
+                  - iam:DetachRolePolicy
+                  - iam:DeleteRolePolicy
                 Resource: "*"
           PolicyName: CanaryServiceStackPolicy
       RoleName: CanaryServiceStackRole
