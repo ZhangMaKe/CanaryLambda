@@ -131,6 +131,7 @@ Resources:
             Action:
               - iam:DeleteRole
               - iam:DeleteRolePolicy
+              - iam:PutRolePolicy
             Resource:
               - !GetAtt ServiceStackRole.Arn
               - !GetAtt CodeBuildServiceRole.Arn
