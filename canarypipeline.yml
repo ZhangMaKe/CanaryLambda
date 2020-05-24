@@ -166,6 +166,7 @@ Resources:
                   - iam:DeleteRolePolicy
                   - iam:DeleteRole
                   - iam:AttachRolePolicy
+                  - iam:PutRolePolicy
                 Resource: "*"
           PolicyName: CanaryServiceStackPolicy
       RoleName: CanaryServiceStackRole
