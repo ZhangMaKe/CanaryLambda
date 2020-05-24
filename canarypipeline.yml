@@ -115,6 +115,31 @@ Resources:
           PolicyName: CanaryPipelineAdministrationPolicy
       RoleName: CanaryPipelineAdministrationRole
   
+  AdministerPipelineIAMPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Action:
+              - iam:*
+            Resource: !GetAtt AdministerPipelineRole.Arn
+          - Effect: Allow
+            Action:
+              - iam:CreateRole
+            Resource: "*"
+          - Effect: Allow
+            Action:
+              - iam:DeleteRole
+            Resource:
+              - !GetAtt ServiceStackRole.Arn
+              - !GetAtt CodeBuildServiceRole.Arn
+              - !GetAtt CodePipelineExecutionRole.Arn
+      PolicyName: AdministerPipelineIAMPolicy
+      Roles:
+        - !Ref AdministerPipelineRole
+
   ServiceStackRole:
     Type: AWS::IAM::Role
     Properties:
