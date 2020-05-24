@@ -158,6 +158,9 @@ Resources:
               - Effect: Allow
                 Action: 
                   - cloudformation:CreateChangeSet
+                  - codedeploy:CreateApplication 
+                  - iam:GetRole
+                  - iam:CreateRole
                 Resource: "*"
           PolicyName: CanaryServiceStackPolicy
       RoleName: CanaryServiceStackRole
