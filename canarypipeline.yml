@@ -151,15 +151,15 @@ Resources:
               Service:
                 - cloudformation.amazonaws.com
             Action: sts:AssumeRole
-      Policies:
-        - PolicyDocument:
-            Version: 2012-10-17
-            Statement:
-              - Effect: Allow
-                Action: 
-                  - cloudformation:CreateChangeSet
-                Resource: "*"
-          PolicyName: CanaryServiceStackPolicy
+      # Policies:
+      #   - PolicyDocument:
+      #       Version: 2012-10-17
+      #       Statement:
+      #         - Effect: Allow
+      #           Action: 
+      #             - cloudformation:CreateChangeSet
+      #           Resource: "*"
+      #     PolicyName: CanaryServiceStackPolicy
       RoleName: CanaryServiceStackRole
 
   CanaryBuild:
