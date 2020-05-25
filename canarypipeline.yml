@@ -189,6 +189,7 @@ Resources:
                   - lambda:DeleteFunction
                   - lambda:ListVersionsByFunction
                   - lambda:PublishVersion
+                  - lambda:CreateAlias
                 Resource: "*"
           PolicyName: CanaryServiceStackPolicy
       RoleName: CanaryServiceStackRole
