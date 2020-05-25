@@ -187,6 +187,7 @@ Resources:
                   - lambda:GetFunction
                   - lambda:CreateFunction
                   - lambda:DeleteFunction
+                  - lambda:ListVersionsByFunction
                 Resource: "*"
           PolicyName: CanaryServiceStackPolicy
       RoleName: CanaryServiceStackRole
