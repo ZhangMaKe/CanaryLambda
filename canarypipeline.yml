@@ -176,11 +176,11 @@ Resources:
                   - iam:PutRolePolicy
                   - iam:PassRole 
                   - iam:GetRolePolicy
+                  - iam:CreateServiceLinkedRole
                 Resource: 
                   - !Sub 'arn:aws:iam::${AWS::AccountId}:role/${ServiceName}*'
               - Effect: Allow
-                Action:
-                  - iam:CreateServiceLinkedRole
+                Action: 
                   - cloudformation:CreateChangeSet
                   - codedeploy:CreateApplication 
                   - codedeploy:DeleteApplication
