@@ -192,6 +192,8 @@ Resources:
                   - lambda:CreateAlias
                   - lambda:DeleteAlias
                   - apigateway:POST
+                  - apigateway:PATCH
+                  - apigateway:DELETE
                 Resource: "*"
           PolicyName: CanaryServiceStackPolicy
       RoleName: CanaryServiceStackRole
