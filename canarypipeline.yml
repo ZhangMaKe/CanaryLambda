@@ -6,6 +6,9 @@ Parameters:
   GHToken:
     Type: AWS::SSM::Parameter::Value<String>
     Default: token
+  ServiceName:
+    Type: String
+    Default: CanaryService
 
 Resources:
   
@@ -164,8 +167,9 @@ Resources:
                   - iam:DeleteRole
                   - iam:AttachRolePolicy
                   - iam:PutRolePolicy
+                  - iam:PassRole 
                 Resource: 
-                  - !Sub 'arn:aws:iam::${AWS::AccountId}:role/CanaryService*'
+                  - !Sub 'arn:aws:iam::${AWS::AccountId}:role/${ServiceName}*'
               - Effect: Allow
                 Action:
                   - cloudformation:CreateChangeSet
