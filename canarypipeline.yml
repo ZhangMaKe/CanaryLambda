@@ -171,6 +171,7 @@ Resources:
                   - cloudformation:CreateChangeSet
                   - codedeploy:CreateApplication 
                   - codedeploy:DeleteApplication
+                  - codedeploy:CreateDeploymentGroup
                 Resource: "*"
 
           PolicyName: CanaryServiceStackPolicy
