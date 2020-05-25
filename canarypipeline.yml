@@ -177,6 +177,7 @@ Resources:
                   - codedeploy:DeleteApplication
                   - codedeploy:CreateDeploymentGroup
                   - codedeploy:DeleteDeploymentGroup
+                  - lambda:GetFunction
                 Resource: "*"
 
           PolicyName: CanaryServiceStackPolicy
