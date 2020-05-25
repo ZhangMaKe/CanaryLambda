@@ -193,6 +193,7 @@ Resources:
                   - lambda:CreateAlias
                   - lambda:DeleteAlias
                   - lambda:AddPermission
+                  - lambda:RemovePermission
                   - apigateway:POST
                   - apigateway:PATCH
                   - apigateway:DELETE
