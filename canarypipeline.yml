@@ -176,11 +176,11 @@ Resources:
                   - iam:PutRolePolicy
                   - iam:PassRole 
                   - iam:GetRolePolicy
-                  - iam:CreateServiceLinkedRole
                 Resource: 
                   - !Sub 'arn:aws:iam::${AWS::AccountId}:role/${ServiceName}*'
               - Effect: Allow
                 Action: 
+                  - iam:CreateServiceLinkedRole
                   - cloudformation:CreateChangeSet
                   - codedeploy:CreateApplication 
                   - codedeploy:DeleteApplication
@@ -206,8 +206,8 @@ Resources:
                   - apigateway:DELETE
                   - apigateway:GET
                 Resource: "*"
-          PolicyName: CanaryServiceStackPolicy
-      RoleName: CanaryServiceStackRole
+          PolicyName: !Sub "${ServiceName}StackPolicy"
+      RoleName: !Sub "${ServiceName}StackRole"
 
   CanaryBuild:
     Type: AWS::CodeBuild::Project
@@ -306,7 +306,7 @@ Resources:
               OutputFileName: canaryServiceStackOutput.json
               Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
               RoleArn: !GetAtt ServiceStackRole.Arn
-              StackName: CanaryService
+              StackName: !Sub "${ServiceName}"
               ActionMode: CREATE_UPDATE
               TemplatePath: code::canaryservice-package.yml
             InputArtifacts:
