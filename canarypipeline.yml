@@ -178,6 +178,7 @@ Resources:
                   - codedeploy:CreateDeploymentGroup
                   - codedeploy:DeleteDeploymentGroup
                   - lambda:GetFunction
+                  - lambda:CreateFunction
                 Resource: "*"
 
           PolicyName: CanaryServiceStackPolicy
