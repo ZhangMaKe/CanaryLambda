@@ -191,6 +191,7 @@ Resources:
                   - lambda:PublishVersion
                   - lambda:CreateAlias
                   - lambda:DeleteAlias
+                  - lambda:AddPermission
                   - apigateway:POST
                   - apigateway:PATCH
                   - apigateway:DELETE
