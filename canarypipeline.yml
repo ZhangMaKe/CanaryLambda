@@ -192,6 +192,7 @@ Resources:
                   - lambda:DeleteFunction
                   - lambda:ListVersionsByFunction
                   - lambda:PublishVersion
+                  - lambda:GetAlias
                   - lambda:CreateAlias
                   - lambda:DeleteAlias
                   - lambda:AddPermission
