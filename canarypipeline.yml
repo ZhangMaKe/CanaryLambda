@@ -157,17 +157,22 @@ Resources:
             Statement:
               - Effect: Allow
                 Action: 
-                  - cloudformation:CreateChangeSet
-                  - codedeploy:CreateApplication 
                   - iam:GetRole
                   - iam:CreateRole
-                  - codedeploy:DeleteApplication
                   - iam:DetachRolePolicy
                   - iam:DeleteRolePolicy
                   - iam:DeleteRole
                   - iam:AttachRolePolicy
                   - iam:PutRolePolicy
+                Resource: 
+                  - !Sub 'arn:aws:iam::${AWS::AccountId}:role/CanaryService*'
+              - Effect: Allow
+                Action:
+                  - cloudformation:CreateChangeSet
+                  - codedeploy:CreateApplication 
+                  - codedeploy:DeleteApplication
                 Resource: "*"
+
           PolicyName: CanaryServiceStackPolicy
       RoleName: CanaryServiceStackRole
 
