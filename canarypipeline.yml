@@ -176,6 +176,7 @@ Resources:
                   - codedeploy:CreateApplication 
                   - codedeploy:DeleteApplication
                   - codedeploy:CreateDeploymentGroup
+                  - codedeploy:DeleteDeploymentGroup
                 Resource: "*"
 
           PolicyName: CanaryServiceStackPolicy
