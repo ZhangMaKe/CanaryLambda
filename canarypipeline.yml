@@ -190,6 +190,8 @@ Resources:
                   - lambda:ListVersionsByFunction
                   - lambda:PublishVersion
                   - lambda:CreateAlias
+                  - lambda:DeleteAlias
+                  - apigateway:POST
                 Resource: "*"
           PolicyName: CanaryServiceStackPolicy
       RoleName: CanaryServiceStackRole
