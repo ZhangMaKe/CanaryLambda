@@ -176,6 +176,7 @@ Resources:
                   - iam:PutRolePolicy
                   - iam:PassRole 
                   - iam:GetRolePolicy
+                  - iam:CreateServiceLinkedRole
                 Resource: 
                   - !Sub 'arn:aws:iam::${AWS::AccountId}:role/${ServiceName}*'
               - Effect: Allow
