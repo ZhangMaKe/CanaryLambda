@@ -187,6 +187,7 @@ Resources:
                   - codedeploy:CreateDeploymentGroup
                   - codedeploy:DeleteDeploymentGroup
                   - codedeploy:CreateDeployment 
+                  - codedeploy:GetDeployment
                   - codedeploy:GetDeploymentConfig
                   - codedeploy:RegisterApplicationRevision
                   - lambda:GetFunction
