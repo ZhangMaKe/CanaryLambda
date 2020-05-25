@@ -175,6 +175,7 @@ Resources:
                   - iam:AttachRolePolicy
                   - iam:PutRolePolicy
                   - iam:PassRole 
+                  - iam:GetRolePolicy
                 Resource: 
                   - !Sub 'arn:aws:iam::${AWS::AccountId}:role/${ServiceName}*'
               - Effect: Allow
@@ -195,6 +196,7 @@ Resources:
                   - apigateway:POST
                   - apigateway:PATCH
                   - apigateway:DELETE
+                  - apigateway:GET
                 Resource: "*"
           PolicyName: CanaryServiceStackPolicy
       RoleName: CanaryServiceStackRole
