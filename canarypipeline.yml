@@ -196,6 +196,9 @@ Resources:
                   - lambda:AddPermission
                   - lambda:RemovePermission
                   - lambda:UpdateFunctionCode
+                  - lambda:ListTags
+                  - lambda:TagResource
+                  - lambda:UntagResource
                   - apigateway:POST
                   - apigateway:PATCH
                   - apigateway:DELETE
