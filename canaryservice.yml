@@ -22,7 +22,7 @@ Resources:
                   Action: "*"
                   Resource: "*"
             PolicyName: XRayWriteAccess
-        RoleName: CanaryLambdaExecutionRole
+        RoleName: CanaryServiceLambdaExecutionRole
 
   LambdaExecutionXRayPolicy:
     Type: AWS::IAM::Policy
