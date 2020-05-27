@@ -60,6 +60,11 @@ Resources:
                 Resource:
                   - !Sub "${ArtifactBucket.Arn}/*"
                   - !GetAtt ArtifactBucket.Arn
+              - Effect: Allow
+                Action:
+                  - cloudformation:DescribeStacks
+                Resource:
+                  - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${ServiceName}*"
           PolicyName: AllPermissions
       RoleName: CanaryCodePipelineRole
 
@@ -128,6 +133,11 @@ Resources:
                   - codebuild:DeleteProject
                 Resource:
                   - !GetAtt CanaryBuild.Arn
+              - Effect: Allow
+                Action:
+                  - s3:DeleteBucket
+                Resource:
+                  - !GetAtt ArtifactBucket.Arn
           PolicyName: CanaryPipelineAdministrationPolicy
       RoleName: CanaryPipelineAdministrationRole
   
