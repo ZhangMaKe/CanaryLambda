@@ -2,5 +2,5 @@ import json
 def handler(event, context):
   return {
     'statusCode': 200,
-    'body': json.dumps('version 4')
+    'body': json.dumps('version 1')
   }
