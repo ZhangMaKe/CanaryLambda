@@ -51,6 +51,7 @@ Resources:
               - Effect: Allow
                 Action:
                   - codebuild:StartBuild
+                  - codebuild:BatchGetBuilds
                 Resource:
                   - !GetAtt CanaryBuild.Arn
               - Effect: Allow
