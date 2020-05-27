@@ -48,6 +48,11 @@ Resources:
                   - iam:PutRolePolicy
                   - sts:AssumeRole
                 Resource: "*"
+              - Effect: Allow
+                Action:
+                  - codebuild:StartBuild
+                Resource:
+                  - !GetAtt CanaryBuild.Arn 
           PolicyName: AllPermissions
       RoleName: CanaryCodePipelineRole
 
