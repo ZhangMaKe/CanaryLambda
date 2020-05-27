@@ -52,7 +52,12 @@ Resources:
                 Action:
                   - codebuild:StartBuild
                 Resource:
-                  - !GetAtt CanaryBuild.Arn 
+                  - !GetAtt CanaryBuild.Arn
+              - Effect: Allow
+                Action:
+                  s3:GetObject
+                Resource:
+                  - !Sub "${ArtifactBucket.Arn}/*" 
           PolicyName: AllPermissions
       RoleName: CanaryCodePipelineRole
 
@@ -110,12 +115,17 @@ Resources:
                   - cloudformation:CreateChangeSet
                   - codepipeline:DeletePipeline
                   - codepipeline:DeregisterWebhookWithThirdParty
-                  - codebuild:DeleteProject
                   - s3:DeleteBucket
                   - codepipeline:GetPipeline
                   - codepipeline:DeleteWebhook
                   - iam:GetRole
                 Resource: "*"
+              - Effect: Allow
+                Action:
+                  - codebuild:BatchGetProjects
+                  - codebuild:DeleteProject
+                Resource:
+                  - !GetAtt CanaryBuild.Arn
           PolicyName: CanaryPipelineAdministrationPolicy
       RoleName: CanaryPipelineAdministrationRole
   
