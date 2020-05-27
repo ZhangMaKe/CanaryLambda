@@ -55,7 +55,7 @@ Resources:
                   - !GetAtt CanaryBuild.Arn
               - Effect: Allow
                 Action:
-                  s3:GetObject
+                  - s3:GetObject
                 Resource:
                   - !Sub "${ArtifactBucket.Arn}/*" 
           PolicyName: AllPermissions
