@@ -64,6 +64,7 @@ Resources:
                 Action:
                   - cloudformation:DescribeStacks
                   - cloudformation:UpdateStack
+                  - cloudformation:CreateStack
                 Resource:
                   - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${ServiceName}*"
               - Effect: Allow
