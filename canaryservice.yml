@@ -64,7 +64,7 @@ Resources:
       FunctionName: CanaryFunction
       CodeUri: ./code/canaryfunction
       Timeout: 60
-      #Tracing: Active
+      Tracing: Active
       Events:
         ApiEvent:
           Type: Api
