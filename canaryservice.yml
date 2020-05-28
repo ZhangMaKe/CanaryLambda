@@ -83,8 +83,15 @@ Resources:
       Role: !GetAtt LambdaExecutionRole.Arn
       FunctionName: CodeDeployHook_PreTrafficFunction
       InlineCode: |
+        import boto3
         import json
+        cd = boto3.client('codedeploy')
         def handler(event, context):
+          cd.put_lifecycle_event_hook_execution_status(
+            deploymentId=event['DeploymentId'],
+            lifecycleEventHookExecutionId=event['LifecycleEventHookExecutionId'],
+            status='Succeeded'
+          )
           return {
             'statusCode': 200,
             'body': json.dumps('success')
