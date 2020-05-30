@@ -139,7 +139,7 @@ Resources:
                   - codebuild:BatchGetProjects
                   - codebuild:DeleteProject
                 Resource:
-                  - Fn::GetAtt: [!Sub "${ServiceName}Build", Arn]
+                  - Fn::GetAtt: [!Sub "${ServiceName}Build", "Arn"]
               - Effect: Allow
                 Action:
                   - s3:DeleteBucket
