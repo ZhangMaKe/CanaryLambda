@@ -8,7 +8,7 @@ Parameters:
     Default: token
   ServiceName:
     Type: String
-    Default: CanaryService
+    Default: Canary
 
 Resources:
   
@@ -66,14 +66,14 @@ Resources:
                   - cloudformation:UpdateStack
                   - cloudformation:CreateStack
                 Resource:
-                  - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${ServiceName}*"
+                  - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/${ServiceName}Service*"
               - Effect: Allow
                 Action:
                   - iam:PassRole
                 Resource:
                   - !GetAtt ServiceStackRole.Arn
           PolicyName: AllPermissions
-      RoleName: CanaryCodePipelineRole
+      RoleName: !Sub "${ServiceName}CodePipelineRole"
 
   CodeBuildServiceRole:
     Type: AWS::IAM::Role
@@ -98,8 +98,8 @@ Resources:
                 Resource:
                   - !GetAtt ArtifactBucket.Arn
                   - !Join ['', [!GetAtt ArtifactBucket.Arn, "/*"]]
-          PolicyName: CanaryCodeBuildS3Permissions
-      RoleName: CanaryCodeBuildRole
+          PolicyName: !Sub "${ServiceName}CodeBuildS3Permissions"
+      RoleName: !Sub "${ServiceName}CodeBuildRole"
 
   AdministerPipelineRole:
     Type: AWS::IAM::Role
@@ -139,14 +139,14 @@ Resources:
                   - codebuild:BatchGetProjects
                   - codebuild:DeleteProject
                 Resource:
-                  - !GetAtt CanaryBuild.Arn
+                  - Fn::GetAtt: [!Sub "${ServiceName}Build", Arn]
               - Effect: Allow
                 Action:
                   - s3:DeleteBucket
                 Resource:
                   - !GetAtt ArtifactBucket.Arn
-          PolicyName: CanaryPipelineAdministrationPolicy
-      RoleName: CanaryPipelineAdministrationRole
+          PolicyName: !Sub "${ServiceName}PipelineAdministrationPolicy"
+      RoleName: !Sub "${ServiceName}PipelineAdministrationRole"
   
   AdministerPipelineIAMPolicy:
     Type: AWS::IAM::Policy
@@ -210,7 +210,7 @@ Resources:
                   - iam:PassRole 
                   - iam:GetRolePolicy
                 Resource: 
-                  - !Sub 'arn:aws:iam::${AWS::AccountId}:role/${ServiceName}*'
+                  - !Sub 'arn:aws:iam::${AWS::AccountId}:role/${ServiceName}Service*'
               - Effect: Allow
                 Action: 
                   - iam:CreateServiceLinkedRole
@@ -243,8 +243,8 @@ Resources:
                   - apigateway:DELETE
                   - apigateway:GET
                 Resource: "*"
-          PolicyName: !Sub "${ServiceName}StackPolicy"
-      RoleName: !Sub "${ServiceName}StackRole"
+          PolicyName: !Sub "${ServiceName}ServiceStackPolicy"
+      RoleName: !Sub "${ServiceName}ServiceStackRole"
 
   CanaryBuild:
     Type: AWS::CodeBuild::Project
@@ -343,21 +343,21 @@ Resources:
               OutputFileName: canaryServiceStackOutput.json
               Capabilities: CAPABILITY_NAMED_IAM,CAPABILITY_AUTO_EXPAND
               RoleArn: !GetAtt ServiceStackRole.Arn
-              StackName: !Sub "${ServiceName}"
+              StackName: !Sub "${ServiceName}Service"
               ActionMode: CREATE_UPDATE
               TemplatePath: code::canaryservice-package.yml
             InputArtifacts:
               - Name: code
             RoleArn: !GetAtt CodePipelineExecutionRole.Arn
             RunOrder: 2
-            Name: CanaryServiceStack
-          Name: CanaryService
+            Name: !Sub "${ServiceName}ServiceStack"
+          Name: !Sub "${ServiceName}Service"
       ArtifactStores:
         - ArtifactStore:
             Location: !Ref ArtifactBucket
             Type: S3
           Region: us-east-1
-      Name: CanaryPipeline
+      Name: !Sub "${ServiceName}Pipeline"
 
   ArtifactBucket:
     Type: AWS::S3::Bucket
