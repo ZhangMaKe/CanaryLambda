@@ -133,18 +133,24 @@ Resources:
                   - codepipeline:GetPipeline
                   - codepipeline:DeleteWebhook
                   - iam:GetRole
+                  - iam:DeleteRolePolicy
                 Resource: "*"
               - Effect: Allow
                 Action:
                   - codebuild:BatchGetProjects
                   - codebuild:DeleteProject
                 Resource:
-                  - Fn::GetAtt: [!Sub "${ServiceName}Build", "Arn"]
+                  - !GetAtt CanaryBuild.Arn
               - Effect: Allow
                 Action:
                   - s3:DeleteBucket
                 Resource:
                   - !GetAtt ArtifactBucket.Arn
+              - Effect: Allow
+                Action:
+                  - iam:DeleteRolePolicy
+                Resource:
+                  - !Sub 'arn:aws:iam::${AWS::AccountId}:role/${ServiceName}*'
           PolicyName: !Sub "${ServiceName}PipelineAdministrationPolicy"
       RoleName: !Sub "${ServiceName}PipelineAdministrationRole"
   
