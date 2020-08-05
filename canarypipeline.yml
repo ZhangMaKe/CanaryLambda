@@ -122,6 +122,7 @@ Resources:
             Statement:
               - Effect: Allow
                 Action:
+                  - cloudformation:CreateStack
                   - cloudformation:UpdateStack
                   - cloudformation:DescribeStacks
                   - s3:GetObject
@@ -367,3 +368,25 @@ Resources:
 
   ArtifactBucket:
     Type: AWS::S3::Bucket
+
+  WebhookFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: index.handler
+      Runtime: python3.7
+      FunctionName: WebhookFunction
+      InlineCode: |
+        import boto3
+        import json
+        from botocore.vendored import requests
+        def handler(event, context):
+          payload = {"text":"I am the pipeline"}
+          url = 'https://hooks.slack.com/services/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'
+          response = requests.post(
+            url,
+            data = json.dumps(payload), 
+            headers = {'Content-Type': 'application/json'}
+          )
+          return {
+            'statusCode': 200
+          }
