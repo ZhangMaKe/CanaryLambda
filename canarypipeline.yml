@@ -179,6 +179,11 @@ Resources:
               - !GetAtt ServiceStackRole.Arn
               - !GetAtt CodeBuildServiceRole.Arn
               - !GetAtt CodePipelineExecutionRole.Arn
+          - Effect: Allow
+            Action:
+              - lambda:UpdateFunctionCode
+            Resource:
+              - !GetAtt WebhookFunction.Arn 
       PolicyName: AdministerPipelineIAMPolicy
       Roles:
         - !Ref AdministerPipelineRole
