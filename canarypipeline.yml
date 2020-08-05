@@ -387,7 +387,7 @@ Resources:
         from botocore.vendored import requests
         def handler(event, context):
           payload = {"text":"I am the pipeline"}
-          url = 'https://hooks.slack.com/services/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'
+          url = ''
           response = requests.post(
             url,
             data = json.dumps(payload), 
