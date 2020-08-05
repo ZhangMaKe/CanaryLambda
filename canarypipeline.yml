@@ -182,6 +182,7 @@ Resources:
           - Effect: Allow
             Action:
               - lambda:UpdateFunctionCode
+              - lambda:DeleteFunction
             Resource:
               - !GetAtt WebhookFunction.Arn 
       PolicyName: AdministerPipelineIAMPolicy
